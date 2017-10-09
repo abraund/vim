@@ -269,14 +269,6 @@ augroup reload
 	autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
 augroup end
 
-" Prepend escape sequence when alt is pressed
-let c='a'
-while c <= 'z'
-    exec "set <A-".c.">=\e".c
-    exec "imap \e".c." <A-".c.">"
-    let c = nr2char(1+char2nr(c))
-endw
-
 function! DeleteSwapfile()
     let l:filename = $HOME."/.vim/swp/".substitute(expand('%:p'), '/', '%', 'g').'.swp'
     if filereadable(l:filename)
