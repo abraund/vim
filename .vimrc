@@ -13,6 +13,7 @@ call vundle#begin()
 Plugin 'airblade/vim-gitgutter'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'fatih/vim-go'
 Plugin 'gmarik/vundle'
 Plugin 'itchyny/lightline.vim'
 Plugin 'scrooloose/nerdtree.git'
@@ -81,7 +82,7 @@ set noswapfile
 set undofile
 "set backupdir=~/.vim/backup//
 "set directory=~/.vim/swp//
-"set undodir=~/.vim/undo//
+set undodir=~/.vim/undo//
 
 " Disable Ex mode
 nnoremap Q <nop>
