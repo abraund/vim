@@ -9,19 +9,30 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#begin()
 
-" Bundles
-Plugin 'airblade/vim-gitgutter'
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'fatih/vim-go'
+" Vundle
 Plugin 'gmarik/vundle'
-Plugin 'itchyny/lightline.vim'
-Plugin 'scrooloose/nerdtree.git'
+
+" Languages
 Plugin 'scrooloose/syntastic'
-Plugin 'tomtom/tcomment_vim'
-Plugin 'tpope/vim-dispatch'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+
+" Themes
+Plugin 'crusoexia/vim-monokai'
+
+" Navigation
+Plugin 'scrooloose/nerdtree'
+Plugin 'ludovicchabant/vim-gutentags'
+Plugin 'itchyny/lightline.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'ap/vim-buftabline'
+Plugin 'christoomey/vim-tmux-navigator'
+
+" Snippets
+Plugin 'garbas/vim-snipmate'
+Plugin 'marcweber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'honza/vim-snippets'
 
 call vundle#end()
 filetype plugin indent on
@@ -31,32 +42,23 @@ let g:ctrlp_cmd='CtrlP'
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 let g:ctrlp_working_path_mode='r'
 let g:ctrlp_map = '<c-p>'
-" nnoremap <leader>. :CtrlPTag
-
-" GitGutter
-let g:gitgutter_enabled=0
-let g:gitgutter_realtime=0
-let g:gitgutter_eager=0
-let g:gitgutter_map_keys=0
-
-" NerdTree
-let g:NERDTreeAutoDeleteBuffer=1
-let g:NERDTreeChDirMode=2
-let g:NERDTreeHijackNetrw=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeQuitOnOpen=1
-let g:NERDTreeShowBookmarks=1
-noremap <c-t> :NERDTreeToggle<cr>
+let g:ctrlp_custom_ignore = 'node_modules\|.git'
 
 " Syntastic
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_check_on_open=1
-let g:syntastic_check_on_wq=0
-let g:syntastic_python_python_exec="python"
+let g:syntastic_check_on_=0
 
 " Tmux Navigator
 let g:tmux_navigator_no_mappings = 1
+
+" Vim Simple Complete
+let g:vsc_type_complete = 0
+set complete=t
+
+" Set tags where vim is opened
+set tags=.tags
 
 "}}}
 
@@ -80,8 +82,6 @@ set lazyredraw
 set nobackup
 set noswapfile
 set undofile
-"set backupdir=~/.vim/backup//
-"set directory=~/.vim/swp//
 set undodir=~/.vim/undo//
 
 " Disable Ex mode
@@ -134,7 +134,10 @@ set backspace=eol,start,indent
 
 " Colour syntax
 syntax enable
-colorscheme desert
+
+colorscheme monokai
+
+set guioptions=
 
 " Fold column
 set number
@@ -190,9 +193,8 @@ set incsearch
 " Search case insensitive
 set ignorecase
 
-" Visual mode support for * and #
-vnoremap <silent> * :call VisualSelection('f','')<CR>
-vnoremap <silent> # :call VisualSelection('b', '')<CR>
+" Automatically load lastest version of file if modified
+set autoread
 
 " End Section }}}
 
@@ -204,6 +206,9 @@ inoremap jk <esc>
 
 " Space as mapleader
 let mapleader="\<space>"
+
+" Toggle NERDTree, seems not to work if up top.
+nnoremap <leader>; :NERDTreeToggle<cr>
 
 " Move by display line
 nnoremap j gj
@@ -218,9 +223,15 @@ nnoremap <leader><leader> zA
 nnoremap <leader>/ :let@/=""<cr>
 
 " Buffer navigation
-noremap <silent> <c-n> :bnext<cr>
+" noremap <silent> <tab> :bnext<cr>
+" nnoremap <silent> <s-tab> :bprevious<cr>
+" noremap <silent> <c-n> :bnext<cr>
 " noremap <silent> <c-p> :bprevious<cr>
-nnoremap <silent> <leader>bd :bdelete<cr>
+" nnoremap <silent> <leader>bd :bdelete<cr>
+" 
+nnoremap gt :bnext<cr>
+nnoremap gT :bprevious<cr>
+nnoremap gd :bd<cr>
 
 " File management
 nnoremap <leader>w :w<cr>
@@ -249,71 +260,31 @@ nnoremap <silent> <leader>T :make<cr>
 " Quickfix navigation
 noremap <silent> <leader>. :cnext<cr>
 noremap <silent> <leader>, :cprevious<cr>
+noremap <silent> <F8> :cnext<cr>
+noremap <silent> <s-F8> :cprevious<cr>
 
 " View reset
 nnoremap <silent> <leader>r :cclose<cr>:pclose<cr>:lclose<cr>:NERDTreeClose<cr>
+
+" Present only current buffer
+nnoremap <silent> <leader>o :only<cr>
 
 " File shortcuts
 nnoremap <silent> <leader>ev :e $MYVIMRC<cr>
 nnoremap <silent> <leader>el :e ~/.vim/ftplugin<cr>
 
-" Delete swapfile
-nnoremap <leader>sd :call DeleteSwapfile()<cr>
-
 " }}}
 
-" Helpers {{{
 
-" Automatically reload .vimrc on save
-augroup reload
-	autocmd!
-	autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
-augroup end
+" Autoresize to make buffer windows equal size if application is resized
+if has('autocmd')
+    augroup WincentAutocmds
+        autocmd!
 
-function! DeleteSwapfile()
-    let l:filename = $HOME."/.vim/swp/".substitute(expand('%:p'), '/', '%', 'g').'.swp'
-    if filereadable(l:filename)
-        call delete(l:filename)
-        echo "swapfile deleted"
-    else
-       echo "no swapfile present"
-    endif
-endfunction
+        autocmd VimResized * execute normal! \<c-w>="
+    augroup end
+endif
 
-function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        call CmdLine("Ag \"" . l:pattern . "\" " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
-function! CycleColours()
-   let currDir = getcwd()
-   exec "cd $VIMRUNTIME/colors"
-   for myCol in split(glob("*"), '\n')
-      if myCol =~ '\.vim'
-         let mycol = substitute(myCol, '\.vim', '', '')
-         exec "colorscheme " . mycol
-         exec "redraw!"
-         echo "colorscheme = ". myCol
-         sleep 2
-      endif
-   endfor
-   exec "cd " . currDir
-endfunction
+" FileTypes {{{
 
 " }}}
