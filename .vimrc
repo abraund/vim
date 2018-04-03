@@ -44,21 +44,11 @@ let g:ctrlp_working_path_mode='r'
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_custom_ignore = 'node_modules\|.git'
 
-" Syntastic
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_=0
-
 " Tmux Navigator
 let g:tmux_navigator_no_mappings = 1
 
 " NERDTree
 let NERDTreeShowHidden = 1
-
-" Vim Simple Complete
-let g:vsc_type_complete = 0
-set complete=t
 
 " Set tags where vim is opened
 set tags=.tags
