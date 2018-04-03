@@ -13,7 +13,7 @@ call vundle#begin()
 Plugin 'gmarik/vundle'
 
 " Languages
-Plugin 'scrooloose/syntastic'
+Plugin 'w0rp/ale'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 
@@ -52,6 +52,9 @@ let g:syntastic_check_on_=0
 
 " Tmux Navigator
 let g:tmux_navigator_no_mappings = 1
+
+" NERDTree
+let NERDTreeShowHidden = 1
 
 " Vim Simple Complete
 let g:vsc_type_complete = 0
