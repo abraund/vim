@@ -28,11 +28,14 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'ap/vim-buftabline'
 Plugin 'christoomey/vim-tmux-navigator'
 
-" Snippets
+" Editing
 Plugin 'garbas/vim-snipmate'
 Plugin 'marcweber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'honza/vim-snippets'
+Plugin 'mattn/emmet-vim'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'tpope/vim-surround'
 
 call vundle#end()
 filetype plugin indent on
@@ -51,7 +54,7 @@ let g:tmux_navigator_no_mappings = 1
 let NERDTreeShowHidden = 1
 
 " Set tags where vim is opened
-set tags=.tags
+set tags=tags
 
 "}}}
 
@@ -242,10 +245,6 @@ nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
 nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
 
-" Window creation
-nnoremap <silent> <leader>" :split<cr> "seems to be interacting with registers
-nnoremap <silent> <leader>% :vsplit<cr>
-
 " Testrunner
 nnoremap <silent> <leader>t :Make<cr>
 nnoremap <silent> <leader>T :make<cr>
@@ -267,16 +266,6 @@ nnoremap <silent> <leader>ev :e $MYVIMRC<cr>
 nnoremap <silent> <leader>el :e ~/.vim/ftplugin<cr>
 
 " }}}
-
-
-" Autoresize to make buffer windows equal size if application is resized
-if has('autocmd')
-    augroup WincentAutocmds
-        autocmd!
-
-        autocmd VimResized * execute normal! \<c-w>="
-    augroup end
-endif
 
 " FileTypes {{{
 
